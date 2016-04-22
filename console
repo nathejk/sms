@@ -1,0 +1,37 @@
+#!/usr/bin/env php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+date_default_timezone_set('UTC');
+umask(0000);
+
+$app = new \Nathejk\Sms\Application(array('debug' => true));
+$app->boot();
+
+$app['console.input'] = new \Symfony\Component\Console\Input\ArgvInput();
+$app['console.output'] = new \Symfony\Component\Console\Output\ConsoleOutput();
+
+$console = new \Symfony\Component\Console\Application('Nathejk - Sms', '0.1');
+$console->addCommands(array(
+    new \Nathejk\Sms\ListenCommand($app),
+    new \Nathejk\Sms\CreateDatabaseCommand($app),
+));
+
+$outputWriter = new \Doctrine\DBAL\Migrations\OutputWriter(function($message) use ($app) {
+    return $app['console.output']->writeln($message);
+});
+$migrationConfig = new \Doctrine\DBAL\Migrations\Configuration\Configuration($app['db'], $outputWriter);
+$migrationConfig->setMigrationsDirectory(__DIR__ . '/migrations');
+$migrationConfig->setMigrationsNamespace('Nathejk\Sms\Migration');
+$migrationConfig->registerMigrationsFromDirectory($migrationConfig->getMigrationsDirectory());
+
+// This variable is used by doctrine-migrations.php.
+$console->setHelperSet(new \Symfony\Component\Console\Helper\HelperSet([
+    'db' => new Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($app['db']),
+    'question' => new Symfony\Component\Console\Helper\QuestionHelper(),
+    'configuration' => new Doctrine\DBAL\Migrations\Tools\Console\Helper\ConfigurationHelper($app['db'], $migrationConfig),
+]));
+
+Doctrine\DBAL\Migrations\Tools\Console\ConsoleRunner::addCommands($console);
+
+$console->run($app['console.input'], $app['console.output']);
+

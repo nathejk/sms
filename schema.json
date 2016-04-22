@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "/",
+    "type": "object",
+    "properties": {
+        "body": {
+            "id": "body",
+            "type": "string"
+        },
+        "recipient": {
+            "id": "recipient",
+            "type": "string"
+        },
+        "sender": {
+            "id": "sender",
+            "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "body",
+        "recipient",
+        "sender"
+    ]
+}
