@@ -20,5 +20,6 @@ ADD . .
 # Test image
 RUN ./vendor/bin/phpunit src
 
-EXPOSE 80
-CMD /bin/bash -c "source /etc/apache2/envvars && exec /usr/sbin/apache2 -DFOREGROUND"
+#EXPOSE 80
+#CMD /bin/bash -c "source /etc/apache2/envvars && exec /usr/sbin/apache2 -DFOREGROUND"
+CMD ./console --no-interaction migrations:migrate && ./console sms:listen
