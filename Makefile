@@ -4,6 +4,9 @@ DB_DSN=mysql://nathejk:3weekend@172.17.0.1/sms
 MQ_DSN=nats://172.17.0.1:4222
 SMS_DSN=cpsms://UN:PW@localhost/sms
 
+build:
+	docker build -t $(REPO) .
+
 clean:
 	rm -rf vendor
 
@@ -12,9 +15,6 @@ run:
 
 test:
 	docker exec $(NAME) ./vendor/bin/phpunit ./src
-
-build:
-	docker build -t $(REPO) .
 
 stop:
 	docker rm -f $(NAME)
