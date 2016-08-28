@@ -14,11 +14,13 @@ class MessageQueueService
     {
         $app = $this->app;
         $this->app['mq.client']->subscribe("sms", function (string $payload) use ($app) {
+            $this->app->pingConnections();
+
             $message = json_decode($payload);
             try {
                 $this->app['jsonschema']['message']->validate($message);
             } catch (\JsonSchemaValidation\ValidationException $e) {
-                $app['console.output']->writeln($e->getViolations());
+                $app['console.output']->writeln($e->getViolation());
                 return false;
             } catch (\Exception $e) {
                 $app['console.output']->writeln($e->getMessage());

@@ -53,4 +53,21 @@ class Application extends \Silex\Application
             );
         }
     }
+
+    /**
+     * Ensure that database connection and Postfix connection are not dead.
+     *
+     * This is necessary for long-running jobs.
+     */
+    public function pingConnections()
+    {
+        $db = $this['db'];
+        if ($db->isConnected() && !$db->ping()) {
+            $db->close();
+        }
+        $transport = $this['mailer']->getTransport();
+        if ($transport->isStarted()) {
+            $transport->stop();
+        }
+    }
 }
