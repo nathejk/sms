@@ -65,9 +65,5 @@ class Application extends \Silex\Application
         if ($db->isConnected() && !$db->ping()) {
             $db->close();
         }
-        $transport = $this['mailer']->getTransport();
-        if ($transport->isStarted()) {
-            $transport->stop();
-        }
     }
 }
