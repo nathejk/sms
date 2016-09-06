@@ -61,6 +61,7 @@ class Application extends \Silex\Application
      */
     public function pingConnections()
     {
+        if (empty($this['db'])) return;
         $db = $this['db'];
         if ($db->isConnected() && !$db->ping()) {
             $db->close();
